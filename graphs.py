@@ -1,8 +1,9 @@
 import pandas as pd
 import dash
 from dash import html,dcc
-sensor_loc = pd.read_csv(r'C:\Users\Ziad\PycharmProjects\pythonProject3\graph_sensor_locations.csv')
-
+from dash.dependencies import Input, Output
+sensor_loc_metr = pd.read_csv(r'C:\Users\Ziad\PycharmProjects\pythonProject3\dataset\graph_sensor_locations.csv')
+sensor_loc_pems = pd.read_csv(r'C:\Users\Ziad\PycharmProjects\pythonProject3\dataset\graph_sensor_locations_bay.csv')
 import plotly.express as px
 import plotly.graph_objects as go
 lat = 34.1522
@@ -16,12 +17,15 @@ lon = -118.2437
 # fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
 
 fig = go.Figure(go.Scattermapbox(
-    lat=sensor_loc['latitude'],
-    lon=sensor_loc['longitude'],
+    lat=sensor_loc_pems['latitude'],
+    lon=sensor_loc_pems['longitude'],
     mode='markers',
     marker=dict(color='green'),
-    text=sensor_loc['sensor_id']
+    text=sensor_loc_pems['sensor_id']
 ))
+
+
+
 
 # Set the mapbox layout
 fig.update_layout(mapbox=dict(style="open-street-map", center=dict(lat=lat, lon=lon), zoom=10))

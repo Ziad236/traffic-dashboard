@@ -1,4 +1,5 @@
 import dash
+from dash.dependencies import Input, Output
 import pandas as pd
 import plotly.express as px
 import graphs
@@ -11,8 +12,10 @@ import dash
 import dash_bootstrap_components as dbc
 # Create a Dash app with Bootstrap theme
 app = dash.Dash(__name__, external_stylesheets=["/assets/css/bootstrap.min.css"])
-sensors_loc= r'C:\Users\Ziad\PycharmProjects\pythonProject3\graph_sensor_locations.csv'
-sensors_loc_data=pd.read_csv(sensors_loc)
+sensors_loc_metr= r'C:\Users\Ziad\PycharmProjects\pythonProject3\dataset\graph_sensor_locations.csv'
+sensors_loc_pems= r'C:\Users\Ziad\PycharmProjects\pythonProject3\dataset\graph_sensor_locations_bay.csv'
+sensors_loc_data_pems=pd.read_csv(sensors_loc_pems)
+sensors_loc_data_metr=pd.read_csv(sensors_loc_metr)
 row = dbc.Container(
     [
         dbc.Row(
@@ -38,14 +41,31 @@ row = dbc.Container(
             [
                 dbc.Col(
                     [   html.H3("Select the Dataset",style={"color":"#15133C"}),
-                        dcc.Dropdown([ 'Select','Metr-La','Pems-bay' ], 'Select', id='demo-dropdown1',style={'width':'80%'}
-                        )
+                        dcc.Dropdown(
+                            options=[
+                                {'label': 'Metr-la', 'value': 'metr'},
+                                {'label': 'Pems-bay', 'value': 'pems'},
+
+                            ],
+                            value='Select',
+                            id='demo-dropdown2',
+                            style={'width': '80%'}
+                        ),
                     ],
 
                 ),
                 dbc.Col(
                     [   html.H3("Select the Model",style={"color":"#15133C"}),
-                        dcc.Dropdown([ 'Select','Random Forest Reressor', 'Varima','DCCN'], 'Select', id='demo-dropdown2',style={'width':'80%'})
+                        dcc.Dropdown(
+                            options=[
+                                {'label': 'Random Forest Regressor', 'value': 'rf'},
+                                {'label': 'VARIMA', 'value': 'varima'},
+                                {'label': 'DCCN', 'value': 'dccn'}
+                            ],
+                            value='Select',
+                            id='demo-dropdown3',
+                            style={'width': '80%'}
+                        ),
                     ],
 
 
@@ -77,10 +97,9 @@ dbc.Col(
 
                 ),
 
+#map
+        dbc.Row([dbc.Col([dbc.Card([dcc.Graph(id='map',figure={},style={'height':'100%','width':'100%'}
 
-        dbc.Row([dbc.Col([dbc.Card([dcc.Graph(
-                            figure=graphs.fig,
-                            style={'height': '500px'}
                         )])
             ],width=11),
             dbc.Col([ html.Div([
@@ -121,17 +140,53 @@ dbc.Col(
 ],style={"margin":"20px"})],fluid=True,
     style={'backgroundColor': '#FCF8E8'})
 
-#F0EDD4
-#EEEEEE
-def plot_map(path):
-    us_cities = pd.read_csv(path)
 
-    fig = px.scatter_mapbox(us_cities, lat="latitude", lon="longitude", hover_name="sensor_id",
-                            color_discrete_sequence=["fuchsia"], zoom=3, height=300)
-    fig.update_layout(mapbox_style="open-street-map")
-    fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
 
-    return fig.show()
+
+#pems map
+def create_fig_option2():
+    lat = 37.3382  # Latitude of San Jose
+    lon = -121.8863
+    fig = go.Figure(go.Scattermapbox(
+        lat=sensors_loc_data_pems['latitude'],
+        lon=sensors_loc_data_pems['longitude'],
+        mode='markers',
+        marker=dict(color='green'),
+        text=sensors_loc_data_pems['sensor_id']
+    ))
+    fig.update_layout(mapbox=dict(style="open-street-map", center=dict(lat=lat, lon=lon), zoom=10))
+    fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
+    return fig
+
+
+#metr map
+def create_fig_option1():
+    lat = 34.1522
+    lon = -118.2437
+    fig = go.Figure(go.Scattermapbox(
+        lat=sensors_loc_data_metr['latitude'],
+        lon=sensors_loc_data_metr['longitude'],
+        mode='markers',
+        marker=dict(color='green'),
+        text=sensors_loc_data_metr['sensor_id']
+    ))
+    fig.update_layout(mapbox=dict(style="open-street-map", center=dict(lat=lat, lon=lon), zoom=10))
+    fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
+    return fig
+@app.callback(
+    Output('map', 'figure'),
+    Input('demo-dropdown2', 'value')
+)
+def update_scattermapbox(selected_option):
+    fig={}
+    if selected_option == 'metr':
+        fig = create_fig_option1()
+       # print('metr')
+    elif selected_option == 'pems':
+        fig = create_fig_option2()
+       # print('pems')
+    return fig
+
 
 app.layout = dbc.Container(
     [
