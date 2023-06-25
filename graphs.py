@@ -121,6 +121,33 @@ fig33.update_layout(
 )
 
 
+def plot_map(path):
+    sensor_loc = pd.read_csv(path)
+
+    fig_map = go.Figure(data=go.Scattermapbox(
+        lat=sensor_loc['latitude'],
+        lon=sensor_loc['longitude'],
+        mode='markers',
+        fillcolor="aliceblue",
+        marker={'color': 'green'},
+        unselected={'marker': {'opacity': 1}},
+        selected={'marker': {'opacity': 0.75, 'size': 25, 'color': 'darkolivegreen'}},
+        # marker=dict(color= '#d40b0b',size=10),
+
+        text=sensor_loc['sensor_id']
+    ))
+
+    # Set the mapbox layout
+    fig_map.update_layout(mapbox=dict(style="open-street-map",
+                                  center=dict(lat=lat, lon=lon), zoom=10))
+
+    # Enable point selection
+    fig_map.update_layout(clickmode='event+select')
+    fig_map.update_layout(mapbox=dict(center=dict(lat=lat, lon=lon)))
+    fig_map.update_layout(margin=dict(l=0, r=0, t=0, b=0))
+
+    return fig_map
+
 
 #fig.update_layout(clickmode='event+select')
 

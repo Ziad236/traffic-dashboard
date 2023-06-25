@@ -22,11 +22,17 @@ minutes,hour,year,btn,sensor=read_multiple_file(file_paths)
 if len(sensor) > 1:
     f_sensor=sensor[0]
     s_sensor=sensor[1]
+else:
+    f_sensor=''
+    s_sensor=''
+
 if len(hour) > 1 and len(year) > 1 and len(minutes) > 1 and len(btn) > 1 :
     time_to_forecast = btn[0]
     concated_date = f'{year[0]} {hour[0]}:{minutes[0]}'
     timestamp = datetime.strptime(concated_date, "%Y-%m-%d %H:%M")
-
+else:
+    timestamp=''
+    time_to_forecast=''
 # print(timestamp)
 # print(time_to_forecast)
 # print(f_sensor)
