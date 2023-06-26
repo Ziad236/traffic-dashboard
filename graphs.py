@@ -1,12 +1,12 @@
 import pandas as pd
 import dash
-import test
+import get_api
 from dash import html,dcc
 from dash.dependencies import Input, Output
-sensor_loc_metr = pd.read_csv(r'C:\Users\Ziad\PycharmProjects\pythonProject3\dataset\graph_sensor_locations.csv')
-sensor_loc_pems = pd.read_csv(r'C:\Users\Ziad\PycharmProjects\pythonProject3\dataset\graph_sensor_locations_bay.csv')
-metra_comp=pd.read_csv(r'C:\Users\Ziad\PycharmProjects\pythonProject3\dataset\bay_comp.csv')
-bay_comp=pd.read_csv(r'C:\Users\Ziad\PycharmProjects\pythonProject3\dataset\metra_comp.csv')
+sensor_loc_metr = pd.read_csv(r'./dataset/graph_sensor_locations.csv')
+sensor_loc_pems = pd.read_csv(r'./dataset/graph_sensor_locations_bay.csv')
+metra_comp=pd.read_csv(r'./dataset/bay_comp.csv')
+bay_comp=pd.read_csv(r'./dataset/metra_comp.csv')
 import plotly.express as px
 import plotly.graph_objects as go
 lat = 34.1522
@@ -98,27 +98,27 @@ fig_bar.update_layout(
     paper_bgcolor='#A0C49D'
 )
 
-
-
 fig3 =  go.Figure(go.Indicator(
-
+    gauge={'axis': {'range': [0, 120]}},
     mode = "gauge+number",
-    value = test.pred_speed,
+    value = 4,
     domain = {'x': [0, 1], 'y': [0, 1]},
-    title = {'text': "Real Speed"}))
+    title = {'text': "Real Speed",'font': {'family': 'Arial', 'size': 36, 'color': '#15133C'}}))
 fig3.update_layout(
     plot_bgcolor='black',
     paper_bgcolor='#A0C49D'
 )
 fig33 =  go.Figure(go.Indicator(
+    gauge={'axis': {'range': [0, 120]}},
     mode = "gauge+number",
-    value = test.true_speed,
+    value = 7,
     domain = {'x': [0, 1], 'y': [0, 1]},
-    title = {'text': "Predicted Speed"}))
+    title = {'text': "Predicted Speed",'font': {'family': 'Arial', 'size': 36, 'color': '#15133C'}}))
 fig33.update_layout(
     plot_bgcolor='black',
     paper_bgcolor='#A0C49D'
 )
+
 
 
 def plot_map(path):
@@ -131,7 +131,7 @@ def plot_map(path):
         fillcolor="aliceblue",
         marker={'color': 'green'},
         unselected={'marker': {'opacity': 1}},
-        selected={'marker': {'opacity': 0.75, 'size': 25, 'color': 'darkolivegreen'}},
+        # selected={'marker': {'opacity': 0.75, 'size': 25, 'color': 'darkolivegreen'}},
         # marker=dict(color= '#d40b0b',size=10),
 
         text=sensor_loc['sensor_id']

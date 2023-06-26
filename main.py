@@ -1,7 +1,6 @@
 import dash
 from dash.dependencies import Input, Output
-import test
-
+from get_api import *
 import pandas as pd
 from datetime import datetime
 import plotly.express as px
@@ -14,12 +13,47 @@ from dash import html
 import dash
 import dash_bootstrap_components as dbc
 
+nodes=[]
+pred_time=0
+ture_time=0
+pred_speed=0
+true_speed=0
+str_clock1=None
+str_clock2=None
+loding=True
+hours=None
+minutes=None
+date_g=None
+df_flag="metr"
+sn1=None
+sn2=None
+
+fig3 =  go.Figure(go.Indicator(
+    gauge={'axis': {'range': [0, 120]}},
+    mode = "gauge+number",
+    value = 1,
+    domain = {'x': [0, 1], 'y': [0, 1]},
+    title = {'text': "Real Speed",'font': {'family': 'Arial', 'size': 36, 'color': '#15133C'}}))
+fig3.update_layout(
+    plot_bgcolor='black',
+    paper_bgcolor='#A0C49D'
+)
+fig33 =  go.Figure(go.Indicator(
+    gauge={'axis': {'range': [0, 120]}},
+    mode = "gauge+number",
+    value = 0,
+    domain = {'x': [0, 1], 'y': [0, 1]},
+    title = {'text': "Predicted Speed",'font': {'family': 'Arial', 'size': 36, 'color': '#15133C'}}))
+fig33.update_layout(
+    plot_bgcolor='black',
+    paper_bgcolor='#A0C49D'
+)
 # Create a Dash app with Bootstrap theme
 app = dash.Dash(__name__, external_stylesheets=["/assets/css/bootstrap.min.css"],prevent_initial_callbacks=True)
-sensors_loc_metr= r'C:\Users\Ziad\PycharmProjects\pythonProject3\dataset\graph_sensor_locations.csv'
-sensors_loc_pems= r'C:\Users\Ziad\PycharmProjects\pythonProject3\dataset\graph_sensor_locations_bay.csv'
-metra_comp=pd.read_csv(r'C:\Users\Ziad\PycharmProjects\pythonProject3\dataset\bay_comp.csv')
-bay_comp=pd.read_csv(r'C:\Users\Ziad\PycharmProjects\pythonProject3\dataset\metra_comp.csv')
+sensors_loc_metr= r'./dataset/graph_sensor_locations.csv'
+sensors_loc_pems= r'./dataset/graph_sensor_locations_bay.csv'
+metra_comp=pd.read_csv(r'./dataset/bay_comp.csv')
+bay_comp=pd.read_csv(r'./dataset/metra_comp.csv')
 sensors_loc_data_pems=pd.read_csv(sensors_loc_pems)
 sensors_loc_data_metr=pd.read_csv(sensors_loc_metr)
 hist=[]
@@ -27,7 +61,6 @@ hours=[]
 minutes=[]
 btn=[]
 ls=[]
-file_path='sensor.txt'
 hours_options = [{'label': str(i).zfill(2), 'value': i} for i in range(24)]
 row = dbc.Container(
     [
@@ -35,16 +68,16 @@ row = dbc.Container(
             [
                 dbc.Col(
                     [
-                        html.Img(src="/assets/giza.png", style={'width':'250px'}, className="text-left")
+                        html.Img(src="/assets/giza.png", style={'width':'40%'}, className="text-left")
                     ],
                     width=4
                 ),
                 dbc.Col(
                     [
-                        html.H2("Traffic Forecast",
-                                style={'fontSize': '3rem', 'fontWeight': 'bold', 'text-indent':'200px', 'color':'#15133C'})
+                        html.H2("Traffic Flow Forecasting",
+                                style={'fontSize': '3rem', 'fontWeight': 'bold', 'text-indent':'250px',"margin-left":"160px", 'color':'#15133C'})
                     ],
-                    width=8
+                    width=10
                 ),
             ],
             align='center',
@@ -89,10 +122,10 @@ dbc.Col([
     dcc.DatePickerSingle(
 
                 id="date_picker",
-                min_date_allowed=date(2012, 3, 1),
+                min_date_allowed=date(2012, 6, 5),
                 max_date_allowed=date(2012, 6, 30),
-                initial_visible_month=date(2012, 3, 1),
-                display_format="MMMM D, YYYY",
+                initial_visible_month=date(2012, 6, 5),
+                display_format="MM/DD/YYYY",
 
             ),
 
@@ -124,45 +157,50 @@ dbc.Col(
         dbc.Row([dbc.Col([dbc.Card([dcc.Graph(id='map',figure=graphs.plot_map(sensors_loc_metr),style={'height':'100%','width':'100%'}
 
                         )])
-            ],width=11),
+            ],width=10),
 
             dbc.Col([ html.Div([
-    html.H4("Pick prediction time",style={"color":"#15133C"}),
+    html.H4("Pick prediction time",style={"color":"#15133C","font-size":"20px"}),
     html.Button('10 Minutes', id='btn-nclicks-1',value='10', n_clicks=0,style={"padding":"20px","margin":"15px","border-radius":"7px","fontSize":"20px","background-color":"#A0C49D","color":"#15133C","height":"100px","width":"120px"}),
     html.Button('30 Minutes', id='btn-nclicks-2',value='30', n_clicks=0,style={"padding":"20px","margin":"15px","border-radius":"7px","fontSize":"20px","background-color":"#A0C49D","color":"#15133C","height":"100px","width":"120px"}),
     html.Button('1 Hour', id='btn-nclicks-3',value='60', n_clicks=0,style={"padding":"20px","margin":"15px","border-radius":"7px","fontSize":"20px","background-color":"#A0C49D","color":"#15133C","height":"100px","width":"120px"}), #FCF8E8
     html.Div(id='container-button-timestamp'),
     html.Div(id='map_output'),
 ])
-                ],width=1)
+                ],width=2)
             ],style={'padding':'20px'}),
         dbc.Col(
         [ dbc.Row([
           html.Br(),html.Br(),
           dbc.Row([dbc.Col([
-              #dcc.Interval(id='interval1', interval=2000, n_intervals=0),
+              dcc.Interval(id='interval1', interval=1000, n_intervals=0),
               dcc.Graph(id='gag1',
-                            figure=graphs.fig3,
+                            figure=fig3,
                             style={'height': '500px',"margin":"15px","padding":"20px","fontSize":"20px"}
-                        ),html.H3("Real Time Travel:",style={'font-size': '48px', 'text-align': 'center'}),
-              html.Div(
-                  id='clock',
-                  children=[test.true_time],
-                  style={'font-size': '48px', 'text-align': 'center'}
-              )],width=6),
-              dbc.Col([
-
-                  dcc.Graph(
-                  id='gag2',
-                  figure=graphs.fig33,
-                  style={'height': '500px', "margin": "15px", "padding": "20px", "fontSize": "20px"}
-              ),html.H3("Predicted Time:",style={'font-size': '48px', 'text-align': 'center'}),
+                        ),html.H3("Real Travel Time:",style={'font-size': '48px', 'text-align': 'center'}),
+                        dbc.Card([
+                            
                   html.Div(
 
                       id='clock1',
-                      children=[test.pred_time],
-                      style={'font-size': '48px', 'text-align': 'center'}
-                  )], width=6),
+                      children=[f"-"],
+                      style={'font-size': '40px', 'text-align': 'center','font-family':'Orbitron'}
+                  )],style={'width':'50%',"margin-left":"185px","padding":"30px","background-color":"#A0C49D"})],width=6),
+              dbc.Col([
+             
+                  dcc.Graph(
+                  id='gag2',
+                  figure=fig33,
+                  style={'height': '500px', "margin": "15px", "padding": "20px", "fontSize": "20px"}
+                  
+              ),html.H3("Predicted Time Travel:",style={'font-size': '48px', 'text-align': 'center'}),
+              dbc.Card([
+html.Div(
+                  id='clock2',
+                  children=[f"--"],
+                  style={'font-size': '40px', 'text-align': 'center','font-family':'Orbitron'})],
+                  style={'width':'50%',"margin-left":"190px","padding":"30px","background-color":"#A0C49D"})
+                                    ], width=6),
 
         ])]),
           dbc.Row([dcc.Graph(
@@ -181,32 +219,9 @@ html.Div([html.Plaintext(id='res_btn'),html.Plaintext(id='res_btn2'),html.Plaint
 
 
 
-file_path_hist = 'file.txt'
-file_path_hour = 'hour.txt'
-file_path_minute = 'minute.txt'
-file_path_btn = 'button.txt'
-def to_write_hist(val1,val2):
-    # Open the file in write mode
-    with open(file_path_hist, 'a') as file:
-        # Write the new content
-        file.write(f"{val1},{val2}")
-def to_write_hour(val1,val2):
-    # Open the file in write mode
-    with open(file_path_hour, 'a') as file:
-        # Write the new content
-        file.write(f"{val1},{val2}")
-def to_write_minute(val1,val2):
-    # Open the file in write mode
-    with open(file_path_minute, 'a') as file:
-        # Write the new content
-        file.write(f"{val1},{val2}")
-def to_write_btn(val1,val2):
-    # Open the file in write mode
-    with open(file_path_btn, 'a') as file:
-        # Write the new content
-        file.write(f"{val1},{val2}")
+
 #pems map
-def create_fig_option2():
+def create_fig_option2(df=[]):
     lat = 37.3382  # Latitude of San Jose
     lon = -121.8863
     fig = go.Figure(go.Scattermapbox(
@@ -216,13 +231,29 @@ def create_fig_option2():
         marker=dict(color='green'),
         text=sensors_loc_data_pems['sensor_id']
     ))
+    if len(df) :
+        df_red=df[df["color"]=="red"]
+        lat_r=df_red["latitude"].iloc[-1]
+        lon_r=df_red["longitude"].iloc[-1]
+        fig = go.Figure(go.Scattermapbox(
+        lat=df['latitude'],
+        lon=df['longitude'],
+        mode='markers',
+        marker=dict(color=df['color'],size=df["size"]),
+        unselected={'marker': {'opacity': 1}},
+        selected={'marker': {'opacity': 0.75, 'size': 25, 'color': 'darkolivegreen'}},
+        text=df['sensor_id']
+    ))
+        fig.update_layout(mapbox=dict(style="open-street-map",center=dict(lat=lat_r, lon=lon_r), zoom=10))
+        fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
+        return fig
     fig.update_layout(mapbox=dict(style="open-street-map", center=dict(lat=lat, lon=lon), zoom=10))
     fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
     return fig
 
 
 #metr map
-def create_fig_option1():
+def create_fig_option1(df=[]):
     lat = 34.1522
     lon = -118.2437
     fig = go.Figure(go.Scattermapbox(
@@ -234,97 +265,57 @@ def create_fig_option1():
         selected={'marker': {'opacity': 0.75, 'size': 25, 'color': 'darkolivegreen'}},
         text=sensors_loc_data_metr['sensor_id']
     ))
+    if len(df) :
+        df_red=df[df["color"]=="red"]
+        lat_r=df_red["latitude"].iloc[-1]
+        lon_r=df_red["longitude"].iloc[-1]
+        fig = go.Figure(go.Scattermapbox(
+        lat=df['latitude'],
+        lon=df['longitude'],
+        mode='markers',
+        marker=dict(color=df['color'],size=df['size']),
+        unselected={'marker': {'opacity': 1}},
+        selected={'marker': {'opacity': 0.75, 'size': 25, 'color': 'darkolivegreen'}},
+        text=df['sensor_id']
+    ))
+        fig.update_layout(mapbox=dict(style="open-street-map",center=dict(lat=lat_r, lon=lon_r), zoom=10))
+        fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
+        return fig
     fig.update_layout(mapbox=dict(style="open-street-map", center=dict(lat=lat, lon=lon), zoom=10))
     fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
     return fig
 @app.callback(
-    Output('map', 'figure',allow_duplicate=True),
+    [Output('map', 'figure',allow_duplicate=True),
+     Output("date_picker", "min_date_allowed"),
+    Output("date_picker", "max_date_allowed"),
+    Output("date_picker", "initial_visible_month")],
     Input('demo-dropdown2', 'value')
 )
 def update_scattermapbox(selected_option):
+    global df_flag
+    df_flag=selected_option
+    min_date_allowed=date(2012, 6, 6)
+    max_date_allowed=date(2012, 6, 30)
+    initial_visible_month=date(2012, 6, 6)
     if selected_option is None:
         fig=create_fig_option1()
+        
     if selected_option == 'metr':
         fig = create_fig_option1()
         # fig= metr_call()
        # print('metr')
     elif selected_option == 'pems':
         fig = create_fig_option2()
+        min_date_allowed = date(2017, 5, 26)
+        max_date_allowed = date(2017, 6, 30)
+        initial_visible_month = date(2017, 5, 26)
         # fig= pems_call()
        # print('pems')
-    return fig
+    return fig, min_date_allowed, max_date_allowed, initial_visible_month
 
 
-def metr_call():
-    locations = [go.Scattermapbox(
-        lon=sensors_loc_data_metr['longitude'],
-        lat=sensors_loc_data_metr['latitude'],
-        mode='markers',
-        # marker={'color': sensors_loc_data_metr['color']},
-        text=sensors_loc_data_metr['sensor_id'],
-        unselected={'marker': {'opacity': 1}},
-        selected={'marker': {'opacity': 0.75, 'size': 25, 'color': 'darkslategray'}},
-        # hoverinfo=df['sensor_id'],
-        #  hovertext=df['hov_txt'],
-        #  customdata=df['website']
-    )]
 
-    # Return figure
-    return {
-        'data': locations,
-        'layout': go.Layout(
-            # uirevision='foo',  # preserves state of figure/map after callback activated
-            clickmode='event+select',
-            # hovermode='closest',
-            # hoverdistance=2,
-            title=dict(text="How Long is it take?", font=dict(size=50, color='green')),
-            mapbox=dict(
-                bearing=25,
-                style='light',
-                center=dict(
-                    lat=40.80105,
-                    lon=-73.945155
-                ),
-                pitch=40,
-                zoom=11.5
-            ),
-        )
-    }
-def pems_call():
-    locations = [go.Scattermapbox(
-        lon=sensors_loc_data_pems['longitude'],
-        lat=sensors_loc_data_pems['latitude'],
-        mode='markers',
-        # marker={'color': sensors_loc_data_metr['color']},
-        text=sensors_loc_data_pems['sensor_id'],
-        unselected={'marker': {'opacity': 1}},
-        selected={'marker': {'opacity': 0.75, 'size': 25, 'color': 'darkslategray'}},
-        # hoverinfo=df['sensor_id'],
-        #  hovertext=df['hov_txt'],
-        #  customdata=df['website']
-    )]
 
-    # Return figure
-    return {
-        'data': locations,
-        'layout': go.Layout(
-            # uirevision='foo',  # preserves state of figure/map after callback activated
-            clickmode='event+select',
-            # hovermode='closest',
-            # hoverdistance=2,
-            title=dict(text="How Long is it take?", font=dict(size=50, color='green')),
-            mapbox=dict(
-                bearing=25,
-                style='light',
-                center=dict(
-                    lon=sensors_loc_data_pems['longitude'][0],
-                    lat=sensors_loc_data_pems['latitude'][0]
-                ),
-                pitch=40,
-                zoom=11.5
-            ),
-        )
-    }
 
 #date callback
 @app.callback(
@@ -332,13 +323,10 @@ def pems_call():
     Input('date_picker', 'date')
 )
 def update_output(date_value):
+    global date_g
     if date_value is not None:
-        hist.append(date_value)
-        if len(hist) == 1:
-            to_write_hist(hist[0],'')
-        return f'selected date  =>{date_value} '
-    else:
-        return 'enter the date'
+        date_g=date_value
+        
 
 @app.callback(
     Output("res_btn", "children"),
@@ -347,24 +335,56 @@ def update_output(date_value):
 
 )
 def update_output(n_clicks,btn_value):
+    global nodes
+    global pred_time
+    global ture_time
+    global pred_speed
+    global true_speed
+    global loding
+    global btn
+    global minutes
+    global  date_g
+    global hours
     if btn_value is not None and n_clicks>0:
-        btn.append(btn_value)
-        to_write_btn(btn[-1],'')
-       # return f'selected time  =>{btn} '
-    # else:
-    #     return 'enter the date'
+        loding=True
+        btn=btn_value
+        timestamp=get_ui(minutes, hours, date_g)
+        json_data,loding=get_data(sn1,sn2,timestamp,btn)
+        nodes=json_data["nodes"]
+        pred_time=float(json_data["pred_time"])
+        ture_time=float(json_data["ture_time"])
+        pred_speed=float(json_data["pred_speed"])
+        true_speed=float(json_data["true_speed"])
+
+        return ''
 @app.callback(
     Output("res_btn2", "children"),
     [Input('btn-nclicks-2', 'n_clicks'),
      Input('btn-nclicks-2', 'value')]
 )
 def update_output(n_clicks,btn_value):
+    global nodes
+    global pred_time
+    global ture_time
+    global pred_speed
+    global true_speed
+    global loding
+    global btn
+    global minutes
+    global  date_g
+    global hours
     if btn_value is not None and n_clicks>0:
-        btn.append(btn_value)
-        to_write_btn(btn[-1],'')
-        return f'selected time  =>{btn} '
-    else:
-        return 'enter the date'
+        loding=True
+        btn=btn_value
+        timestamp=get_ui(minutes, hours, date_g)
+        json_data,loding=get_data(sn1,sn2,timestamp,btn)
+        nodes=json_data["nodes"]
+        pred_time=float(json_data["pred_time"])
+        ture_time=float(json_data["ture_time"])
+        pred_speed=float(json_data["pred_speed"])
+        true_speed=float(json_data["true_speed"])
+
+    return ''
 @app.callback(
     Output("res_btn3", "children"),
     [Input('btn-nclicks-3', 'n_clicks'),
@@ -373,144 +393,132 @@ def update_output(n_clicks,btn_value):
 )
 def update_output(n_clicks,btn_value):
 
+    global nodes
+    global pred_time
+    global ture_time
+    global pred_speed
+    global true_speed
+    global loding
+    global btn
+    global minutes
+    global  date_g
+    global hours
     if btn_value is not None and n_clicks>0:
-        btn.append(btn_value)
-        to_write_btn(btn[-1],'')
-        return f'selected time  =>{btn} '
-    else:
-        return 'enter the date'
+        loding=True
+        btn=btn_value
+        timestamp=get_ui(minutes, hours, date_g)
+        json_data,loding=get_data(sn1,sn2,timestamp,btn)
+        nodes=json_data["nodes"]
+        pred_time=float(json_data["pred_time"])
+        ture_time=float(json_data["ture_time"])
+        pred_speed=float(json_data["pred_speed"])
+        true_speed=float(json_data["true_speed"])
+
+        return ''
 @app.callback(
     Output("output2", "children"),
     Input("hours_dropdown", "value")
 )
 
 def update_output(selected_hours):
+    global hours
     if selected_hours is not None:
-        hours.append(selected_hours)
-        if len(hours) == 1:
-            to_write_hour(hours[2],'')
-        return f'selected hours  =>{hours} '
-    else:
-        return 'enter the date'
+        hours= selected_hours
+        
 @app.callback(
     Output("output3", "children"),
     Input("minutes_dropdown", "value")
 )
 
 def update_output(selected_minutes):
+    global minutes
     if selected_minutes is not None:
-        minutes.append(selected_minutes)
-        if len(minutes) == 1:
-            to_write_minute(minutes[0], '')
-        return f'selected minutes  =>{minutes} '
+        minutes=selected_minutes
+        
+       
+
+
+@app.callback(
+    [Output('gag1', 'figure'),Output('gag2', 'figure'),
+    Output('clock1', 'children'),Output('clock2', 'children'),],
+    Input('interval1', 'n_intervals')
+)
+def update_gauge_chart(n):
+    # Calculate the updated value based on your logic
+    global str_clock1
+    global str_clock2
+    global pred_speed
+    global true_speed
+    global pred_time
+    global ture_time
+    global loding
+    if  loding ==False:
+        fig3.update_traces(value=pred_speed) # Replace with your calculation logic
+        fig33.update_traces(value=true_speed)
+       
+    
+    elif n%2 and loding ==True:
+        fig3.update_traces(value=120) # Replace with your calculation logic
+        fig33.update_traces(value=120)
+        pred_time=0
+        ture_time=0
     else:
-        return 'enter the date'
-
-
-if len(hist) < 1 and len(hours) <1 and len(minutes):
-    total_hist=f'{hist[0]}+{hours[0]}+{minutes[0]}'
-    #print(total_hist)
-
+        fig3.update_traces(value=1) # Replace with your calculation logic
+        fig33.update_traces(value=1)
+    if pred_time==0:
+        str_clock1=fraction_to_minutes_seconds(0)
+        str_clock2=fraction_to_minutes_seconds(0)
+   
+    elif n%2 and pred_time!=0:
+        str_clock1=fraction_to_minutes_seconds(pred_time)
+        str_clock2=fraction_to_minutes_seconds(ture_time)
+    else:
+        str_clock1=':'
+        str_clock2=':'
+    # Update the value in the gauge chart
+    return fig3,fig33,str_clock1,str_clock2
 #date_call
-@app.callback(
-    dash.dependencies.Output('clock', 'children'),
-    dash.dependencies.Input('gag1', 'id')
-)
-def update_clock(value):
-    # Get the current time
-    print(value,'ajhaoihqa')
-    now = test.pred_time
-    return now
-@app.callback(
-    dash.dependencies.Output('clock1', 'children'),
-    dash.dependencies.Input('gag2', 'id')
-)
-def update_clock(_):
-    # Get the current time
-    now = test.true_time
 
-    return now
 
-def to_write(val1,val2):
-    # Open the file in write mode
-    with open(file_path, 'w+') as file:
-        # Write the new content
-        file.write(f"{val1},{val2} ")
 @app.callback(
-    dash.dependencies.Output('map_output', 'children'),
+    #dash.dependencies.Output('map_output', 'children'),
+     dash.dependencies.Output('map', 'figure',allow_duplicate=True),
     [dash.dependencies.Input('map', 'clickData')]
 )
 def display_click_data(clickData):
+    global sn1, sn2,df_flag
     if clickData is not None:
         lat = clickData['points'][0]['lat']
         lon = clickData['points'][0]['lon']
         sensor = clickData['points'][0]['text']
-        # global ls
         ls.append(sensor)
-        # f = open("file.txt","a")
-        # f.write(str(sensor))
-        # f.close()
-        if len(ls) == 2:
-            to_write(ls[0], ls[1])
-    #     return f'sensor_id  =>{ls} '
-    # else:
-    #     return 'Click on a point to get its coordinates'
+        if df_flag=="metr":
+            df=sensors_loc_data_metr.copy(deep=True)
+            df["color"]="green"
+            df["size"]=7
+            change=df[df['sensor_id'].isin(ls)]["color"].index.tolist()
+            df.iloc[change,-2:-1]='red'
+            df.iloc[change,-1:]=12
+            fig = create_fig_option1(df)     
+        else:
+            df=sensors_loc_data_pems.copy(deep=True)
+            df["color"]="green"
+            df["size"]=7
+            change=df[df['sensor_id'].isin(ls)]["color"].index.tolist()
+            df.iloc[change,-2:-1]='red'
+            df.iloc[change,-1:]=12
+            fig = create_fig_option2(df)
+              
+        # df["color"]="green"
+        # change=df[df['sensor_id'].isin(ls)]["color"].index.tolist()
+        # df.iloc[change,-1:]='red'
+        # print(df.iloc[change,:])
+    if len(ls) > 1:
+            sn1=ls[0]
+            sn2=ls[1]
+            ls.clear()  
+    return fig
 
-
-# change  color map after selecting some points
-# Output of Graph
-# @app.callback(Output('map', 'figure',allow_duplicate=True),
-#               [Input('map', 'clickData'),
-#                Input('demo-dropdown2', 'value')])
-# def update_figure(clickData,value):
-#     # df.loc[:10,'color']="blue"
-#     # 00FF00
-#     print(value)
-#     if value == 'metr':
-#        metr_call()
-#     else:
-#         return pems_call()
-
-
-# @app.callback(
-#     Output('gag1', 'figure'),
-#     Input('interval1', 'n_intervals')
-# )
-# def update_gauge_chart(n):
-#     # Calculate the updated value based on your logic
-#
-#     updated_value = test.pred_speed  # Replace with your calculation logic
-#
-#     # Update the value in the gauge chart
-#     graphs.fig3.update_traces(values=[updated_value])
-#
-#     return graphs.fig3
-# @app.callback(
-#     Output('gag2', 'figure'),
-#     Input('interval2', 'n_intervals')
-# )
-# def update_gauge_chart(n):
-#     # Calculate the updated value based on your logic
-#
-#     updated_value = test.true_speed  # Replace with your calculation logic
-#
-#     # Update the value in the gauge chart
-#     graphs.fig33.update_traces(values=[updated_value])
-#
-#     return graphs.fig33
-file_paths=[file_path_minute,file_path_hour,file_path_hist]
-def read_multiple_file(file_paths:list):
-    date=[]
-
-    for file_path in file_paths:
-        with open(file_path, 'r') as file:
-            content = file.read()
-            # Process the file content
-            #print(content)
-        date.append(content)
-    return date[0].strip().split(','),date[1].strip().split(','),date[2].strip().split(',')
-
-read_multiple_file(file_paths)
 
 
 
@@ -522,4 +530,4 @@ app.layout = dbc.Container(
 )
 
 if __name__ == '__main__':
-    app.run_server(debug=True, port=8001)
+    app.run_server(debug=False, port=8001, dev_tools_hot_reload=False)

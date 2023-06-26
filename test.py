@@ -1,49 +1,39 @@
-from datetime import datetime
-
-file_path_hist = 'file.txt'
-file_path_hour = 'hour.txt'
-file_path_minute = 'minute.txt'
-file_path_btn = 'button.txt'
-sensor_list='sensor.txt'
-file_paths = [file_path_minute, file_path_hour, file_path_hist,file_path_btn,sensor_list]
+import dash
+import dash_core_components as dcc
+import dash_html_components as html
+from dash.dependencies import Output, Input, State
 
 
-def read_multiple_file(file_paths: list):
-    date = []
+app = dash.Dash(__name__)
 
-    for file_path in file_paths:
-        with open(file_path, 'r') as file:
-            content = file.read()
-        date.append(content)
-    return date[0].strip().split(','), date[1].strip().split(','), date[2].strip().split(','),date[3].strip().split(','),date[4].strip().split(',')
+global_var = 1  # Declare the global variable
 
+# Create the layout of the application
+app.layout = html.Div([
+    html.Button('Update VAT', id='update-vat-button'),
+    html.Div(id='vat-output'),
+    html.Div(id='vat-2',children=[f"gggggggg {global_var}"]),
+])
 
-minutes,hour,year,btn,sensor=read_multiple_file(file_paths)
-if len(sensor) > 1:
-    f_sensor=sensor[0]
-    s_sensor=sensor[1]
-else:
-    f_sensor=''
-    s_sensor=''
+# Callback function to update and access the global_var variable
+@app.callback(Output('vat-output', 'children'),
+              [Input('update-vat-button', 'n_clicks')],
+              [State('vat-output', 'children')])
+def update_and_access_vat(n_clicks, current_vat):
+    global global_var
+    if n_clicks is not None:
+        return f'rtreved VAT: {global_var}'
+@app.callback(Output('vat-2', 'children'),
+              [Input('update-vat-button', 'n_clicks')],
+              [State('vat-2', 'children')])
 
-if len(hour) > 1 and len(year) > 1 and len(minutes) > 1 and len(btn) > 1 :
-    time_to_forecast = btn[0]
-    concated_date = f'{year[0]} {hour[0]}:{minutes[0]}'
-    timestamp = datetime.strptime(concated_date, "%Y-%m-%d %H:%M")
-else:
-    timestamp=''
-    time_to_forecast=''
-# print(timestamp)
-# print(time_to_forecast)
-# print(f_sensor)
-def get_data(sensor1,sensor2,start_time,time_to_forecast):
-    #url = f'http://127.0.0.1:8000/api/sensors/{sensor1}/{sensor2}/{start_time}/{time_to_forecast}/'
-    lst_sensor = ["773062", "767620", "737529"]
-    pred_time = 22
-    true_time = 10
-    pred_speed=40
-    true_speed=60
-    return lst_sensor,pred_time,true_time,pred_speed,true_speed
+def update_and_access_vat(n_clicks, current_vat):
+    global global_var
+    global_var=global_var+1
+    if n_clicks is not None:
+        return f'inc VAT: {global_var}'
+    else:
+        return f'VAT: {0}'
 
-
-lst_sensor,pred_time,true_time,pred_speed,true_speed= get_data(f_sensor,s_sensor,timestamp,time_to_forecast)
+if __name__ == '__main__':
+    app.run_server(debug=True)
