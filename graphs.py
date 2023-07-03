@@ -1,7 +1,7 @@
 import pandas as pd
 import dash
 from dash import html,dcc
-sensor_loc = pd.read_csv(r'C:\Users\Ziad\PycharmProjects\pythonProject3\graph_sensor_locations.csv')
+sensor_loc = pd.read_csv('graph_sensor_locations.csv')
 
 import plotly.express as px
 import plotly.graph_objects as go

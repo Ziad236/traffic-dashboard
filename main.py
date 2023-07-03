@@ -11,7 +11,7 @@ import dash
 import dash_bootstrap_components as dbc
 # Create a Dash app with Bootstrap theme
 app = dash.Dash(__name__, external_stylesheets=["/assets/css/bootstrap.min.css"])
-sensors_loc= r'C:\Users\Ziad\PycharmProjects\pythonProject3\graph_sensor_locations.csv'
+sensors_loc= 'graph_sensor_locations.csv'
 sensors_loc_data=pd.read_csv(sensors_loc)
 row = dbc.Container(
     [
@@ -26,7 +26,8 @@ row = dbc.Container(
                 dbc.Col(
                     [
                         html.H2("Traffic Forecast",
-                                style={'fontSize': '3rem', 'fontWeight': 'bold', 'text-indent':'200px', 'color':'#15133C'})
+                                style={'fontSize': '3rem', 'fontWeight': 'bold', 
+                                       'text-indent':'200px', 'color':'#15133C'})
                     ],
                     width=8
                 ),
@@ -38,14 +39,16 @@ row = dbc.Container(
             [
                 dbc.Col(
                     [   html.H3("Select the Dataset",style={"color":"#15133C"}),
-                        dcc.Dropdown([ 'Select','Metr-La','Pems-bay' ], 'Select', id='demo-dropdown1',style={'width':'80%'}
+                        dcc.Dropdown([ 'Select','Metr-La','Pems-bay' ], 
+                                     'Select', id='demo-dropdown1',style={'width':'80%'}
                         )
                     ],
 
                 ),
                 dbc.Col(
                     [   html.H3("Select the Model",style={"color":"#15133C"}),
-                        dcc.Dropdown([ 'Select','Random Forest Reressor', 'Varima','DCCN'], 'Select', id='demo-dropdown2',style={'width':'80%'})
+                        dcc.Dropdown([ 'Select','Random Forest Reressor',
+                                      'Varima','DCCN'], 'Select', id='demo-dropdown2',style={'width':'80%'})
                     ],
 
 
@@ -93,7 +96,8 @@ dbc.Col(
                 ],width=1)
             ],style={'padding':'20px'}),
         dbc.Col(
-        [ dbc.Row([
+        [ 
+         dbc.Row([
           html.Br(),html.Br(),
           dbc.Row([dbc.Col([dcc.Graph(
                             figure=graphs.fig2,
@@ -104,7 +108,7 @@ dbc.Col(
                 style={'height': '500px'}
             ),
                   ],style={'padding':'20px',"margin":"30px","background-color":"#A0C49D",'height': '465px'})
-                        ],width=3),
+                        ]),
 
 
 
@@ -113,7 +117,7 @@ dbc.Col(
           dbc.Row([dcc.Graph(
                             figure=graphs.fig4,
                             style={'height': '500px',"margin":"15px","padding":"20px"}
-                        )])
+                        )],width=12)
     ],
 
 ),
@@ -123,15 +127,6 @@ dbc.Col(
 
 #F0EDD4
 #EEEEEE
-def plot_map(path):
-    us_cities = pd.read_csv(path)
-
-    fig = px.scatter_mapbox(us_cities, lat="latitude", lon="longitude", hover_name="sensor_id",
-                            color_discrete_sequence=["fuchsia"], zoom=3, height=300)
-    fig.update_layout(mapbox_style="open-street-map")
-    fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
-
-    return fig.show()
 
 app.layout = dbc.Container(
     [
