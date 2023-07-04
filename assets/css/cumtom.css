@@ -1,0 +1,489 @@
+.DateInput_input {
+    font-weight: 222;
+    font-size: 14px; /* Adjust the font size as desired */
+    line-height: 18px; /* Adjust the line height as desired */
+    color: #333333; /* Adjust the text color as desired */
+    background-color: #ffffff; /* Adjust the background color as desired */
+    width: 120%;
+    padding: 8px 10px 6px;  /*  Adjust the padding as desired */
+    border: 0;
+    border-top: 0;
+    border-right: 0;
+    border-bottom: 2px solid transparent;
+    border-left: 0;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+/* === ANY ELEMENT OVERRIDE ===*/
+@font-face {
+    font-family: "Roboto_font";
+    src: url("RobotoSlab-VariableFont_wght.ttf") }
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    color: #0D3E66
+    !important; /* text color*/
+
+}
+/* === FULL PAGE ===*/
+html,
+body {
+    height: 100vh;
+   /* background-image: linear-gradient(109.6deg, rgb(0, 0, 0) 11.2%, rgb(0, 23, 25) 91.1%);*/
+    /*background-image: linear-gradient(109.6deg, rgb(8, 132, 74) 11.2%, rgb(20, 163, 202) 91.1%);*/
+   /* my lovely one*/
+   background-image: linear-gradient(109.6deg,  #CDE6B5 11.2%, #EECBA7 91.1%);
+    overflow-x: hidden;
+    font-size: 18px;
+    font-family:"Arial";
+}
+
+/* === dcc.Graphh components ===*/
+.dash-graph.my-graph {
+    background-color: rgba(61, 12, 82, 0.11);
+    border-radius: 11px;
+}
+
+/* === dbc.Col which contains graphs ===*/
+.multi-graph {
+    padding: 10px 10px 10px 10px;
+}
+
+/* === NAV ===*/
+.logo {
+    padding: 23px 1px 1px 1px;
+    text-align: center;
+    vertical-align: middle;
+    text-shadow: 0px 0px 50px #4be9fa;
+}
+
+.app-brand {
+    font-size: 35px;
+    font-weight: 200;
+    text-shadow: 0px 0px 50px #4be9fa;
+}
+
+.my-nav {
+    font-size: 18px !important;
+}
+
+.nav-pills .nav-link.active {
+    background-color: #d40b0b;
+}
+
+/* === FOOTER ===*/
+.hr-footer {
+    height: 5px;
+}
+
+.footer {
+    font-size: 15px;
+}
+
+/* === HOME ===*/
+.guide {
+    text-align: left;
+    font-size: 16px;
+    font-weight: 100; 
+}
+
+/* === PAGE 1 ===*/
+.row-content {
+    margin: 20px 0px 20px 0px;
+}
+
+.par {
+    text-align: center;
+}
+
+input[type='radio'] {
+    accent-color: #042f33;
+    margin: 5px 5px 5px 5px;
+}
+
+.row-titles {
+    padding: 10px 0px 20px 0px;
+    text-align: center;
+    text-decoration: solid;
+}
+
+.data-upload-invisible {
+    width : 0%;
+    height : 0px;
+    border-radius: none;
+    border-style: none;
+    border-width: 0px;
+    line-height: 0px;
+}
+
+.data-upload-area {
+    width : 100%;
+    height : 60px;
+    border-radius: 5px;
+    border-style: dashed;
+    border-width: 1px;
+    line-height: 60px;
+    text-align: center;
+}
+
+/* === PAGE 2 ===*/
+input[type="checkbox" i] {
+    margin-right: 5px;
+    accent-color: #3DED97;
+    border: 1px solid black;
+    border-width: 5px;
+}
+
+.Select-control, .Select-menu-outer {
+    /* background-color: #042f3300 !important;
+    border-width: 1px;
+    border-color: #042f33 !important; */
+
+    font-size: 12px;
+  }
+
+#stationarity-test {
+    margin: 0px 15px 5px 15px;
+}
+
+.alert, .alert-danger, .alert-success {
+    padding: 3px 10px 3px 10px !important;
+    text-align: center;
+    color:#153304 !important;
+}
+
+
+/* === PAGE 3 ===*/
+
+/* === PAGE 4 ===*/
+/* .col-fin-dropdown {
+    margin: 0px 5px 0px 0px !important;
+    padding: 0px !important;
+    background-color:inherit;
+} */
+/* custom card*/
+/* styles.css */
+
+.custom-card {
+    background-color: background;
+    border: none;
+    box-shadow: none;
+  }
+  
+.custom-card.card-body {
+    background-color: #196640;
+    
+  }
+.custom-heading {
+    color: green;
+ 
+  }
+/*testing the compound in the card */
+.compound-card {
+   /* background-color:  #fb1717;**/
+   /* background-image: linear-gradient(109.6deg, rgb(42, 30, 58) 11.2%, rgb(0, 23, 25) 91.1%);
+*/
+     background-color:inherit
+}
+#banner_valuation {
+    /*background-color: rgb(0, 23, 25);*/
+    background-image: linear-gradient(109.6deg, rgb(0, 0, 0) 11.2%, rgb(0, 23, 25) 70.1%);
+
+    padding: 2rem;
+    border-radius:8px;
+    text-align:center;
+
+}
+#banner_funding {
+    /*background-color:  #025464;*/
+   /* background-color: #3DED97 !important;*/
+    background-image: linear-gradient(109.6deg, rgb(0, 0, 0) 11.2%, rgb(0, 23, 25) 91.1%);
+
+    padding: 2rem;
+    border-radius:8px;
+    text-align:center;
+}
+#banner_unicorn {
+   /* background-color:  #025464;*/
+    background-image: linear-gradient(109.6deg, rgb(0, 23, 25) 11.2%, rgb(0, 3, 3) 91.1%);
+
+    padding: 2rem;
+    border-radius:8px;
+    text-align:center;
+
+
+}
+.header-traffic
+    {
+        font-size: 3.5rem;
+        font-weight: bold;
+        color: #15133C;
+        display: flex;
+        justify-content: center;
+        text-align: center;
+        background: inherit;/*incomplete, the value is missing*/
+        padding-top: 50px;
+        padding-bottom: 50px;
+      }
+
+
+.image-giza
+{
+    width: 25%;
+    height: 100%;
+    display: flex;
+    justify-content: center ;
+    background-size: cover;
+    text-align: center;
+    padding-left:200px;
+    padding-right:15px ;
+    position: absolute;
+    left: -150px;
+    top:5px;
+  }
+
+
+  
+.drop-down-dataset
+{
+    font-size: 5rem;
+    font-weight: bold;
+    color: #15133C;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    background: inherit /*incomplete, the value is missing*/
+  }
+.drop-down-hour
+{
+    font-size: 5rem;
+    font-weight: bold;
+    color: #15133C;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    background: inherit /*incomplete, the value is missing*/
+  }
+.drop-down-min
+{
+    font-size: 5rem;
+    font-weight: bold;
+    color: #15133C;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    background: inherit /*incomplete, the value is missing*/
+  }
+.drop-down-model
+{
+    font-size: 5rem;
+    font-weight: bold;
+    color: #15133C;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    background: inherit /*incomplete, the value is missing*/
+  }
+
+  .center-row {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .center-row .dbc-col {
+
+    margin-right: 10px; /* Add some margin between columns if needed */
+  }
+  
+
+
+.center-text {
+    text-align: center;
+}
+
+.prediction-button {
+    font-size: 1.5rem;
+    font-weight: bold;
+    /* padding: 8px 10px 6px; */
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* color: #15133C; */
+    color: black;
+    background-color: inherit;
+    /* background: inherit; incomplete, the value is missing */
+    border-radius: 15px;
+    box-sizing: border-box;
+    transition: 0.5s ease;
+    letter-spacing: 1px;
+    /* margin-top: 20px; */
+}
+
+.prediction-button:hover
+{
+background-color:#B9DEA8;
+transform: scale(1.1);
+}
+.centered-text-speed {
+    font-size: 48px;
+    text-align: center;
+  }
+  .custom-text-time {
+    font-size: 40px;
+    text-align: center;
+    font-family: 'Digital Display';
+  }
+  .graph-speed 
+{
+    
+    background: inherit;
+    box-shadow: 0 5px   25px rgba(1 1 1 / 15%);
+    border-radius:10 px
+}
+
+.graph-row
+{
+    background-color: inherit; 
+    background: inherit;
+}
+.graph-row-card
+{
+    background: inherit;
+    box-shadow: 0 5px   25px rgba(1 1 1 / 15%);
+    border-radius:20 px;
+    padding: 15px;
+    margin-right: 3px;
+    transition: 0.5s ease;
+}
+
+.graph-row-card:hover
+{
+    transform: scale(1.2);
+
+}
+.graph-benchmark
+{
+
+    background: inherit;
+    box-shadow: 0 5px   25px rgba(1 1 1 / 15%);
+
+}
+
+.graph-header
+    {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #000000;
+        display: flex;
+        justify-content: center;
+        text-align: center;
+        background: inherit /*incomplete, the value is missing*/
+      }
+      .graph-title
+      {
+          font-size: 1.5rem;
+          font-weight: bold;
+          color: #000000;
+          display: flex;
+          justify-content: left;
+          text-align:left;
+          background: inherit /*incomplete, the value is missing*/
+        }
+.transparent-box 
+    {
+        box-shadow: 0 5px   25px rgba(1 1 1 / 15%);
+            padding: 10px;
+            border-radius: 5px;
+           
+        }
+
+.chossen-parameter
+{
+font-size: 1rem;
+font-weight: 500;
+display: flex;
+text-align: center;
+justify-content: center;
+
+}
+.chossen-parameter-date{
+font-size: 1rem;
+font-weight: 500;
+display: flex;
+text-align: center;
+justify-content: center;
+}
+.chossen-parameter-header
+{
+    font-size: 1.2rem;
+    font-weight: 700;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    letter-spacing: 1px;
+
+}
+.navigation-list
+{   
+    font-weight: 800;
+    color: #15133C;
+  
+    font-size: 20px;
+    transition: 0.2s ease;
+    position:relative;
+    right:-300px;
+    margin-right: 20px;
+    top:5px;
+    
+}
+.navigation-list:hover
+{
+    transform: scale(1.1);
+}
+.background-style {
+    color: inherit;
+    background-color: inherit;
+    box-shadow: 0 5px   25px rgba(1 1 1 / 15%);
+    border-radius:20 px;
+    
+}
+.drop-down-benshmark
+{
+    font-size: 1rem;
+    width: 120px;
+    align-items: center;
+    display: flex;
+
+    justify-content: center;
+    /* display: inline-block; */
+    color: #ffd5d5;
+
+}
+navigation-list-new
+{   
+    font-size: 1.8rem;
+    font-weight: 800;
+    
+    color: #15133C;
+    display: flex;
+    flex-direction: row;
+    text-align: left;
+     /*incomplete, the value is missing*/
+    /* padding: 2px 2px;*/
+     
+    
+}
+.drop-down-benshmark-twocoloum
+{
+    font-size: 1rem;
+    width:50%;
+    align-items: center;
+    display: flex;
+
+    justify-content: center;
+    /* display: inline-block; */
+    color: #ffd5d5;
+
+}
